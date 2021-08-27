@@ -1,0 +1,2 @@
+rootProject.name = "MapboxNavigationV2Demo"
+include ':app'
