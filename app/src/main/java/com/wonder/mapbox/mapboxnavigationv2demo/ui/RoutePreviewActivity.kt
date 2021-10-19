@@ -24,6 +24,12 @@ import com.mapbox.navigation.base.route.RouterCallback
 import com.mapbox.navigation.base.route.RouterFailure
 import com.mapbox.navigation.base.route.RouterOrigin
 import com.mapbox.navigation.core.MapboxNavigationProvider
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
+import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.wonder.mapbox.mapboxnavigationv2demo.R
 import com.wonder.mapbox.mapboxnavigationv2demo.databinding.ActivityRoutePreviewBinding
 import com.wonder.mapbox.mapboxnavigationv2demo.ui.base.BaseMapViewActivity
@@ -58,6 +64,23 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
         }
     }
 
+    private val routeOptions by lazy {
+        MapboxRouteLineOptions.Builder(this@RoutePreviewActivity)
+            .withRouteLineResources(
+                RouteLineResources.Builder()
+                    .routeLineColorResources(RouteLineColorResources.Builder().build())
+                    .build()
+            ).build()
+    }
+
+    private val routeLineView by lazy {
+        MapboxRouteLineView(routeOptions)
+    }
+
+    private val routeLineApi by lazy {
+        MapboxRouteLineApi(routeOptions)
+    }
+
     private var startPoint: Point? = null
 
     private var endPoint: Point? = null
@@ -79,13 +102,14 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
         mapView.getMapboxMap().apply {
             addOnMapLongClickListener(this@RoutePreviewActivity)
         }
+        mapView.location.getLocationProvider().
     }
 
     override fun inflateBinding(): ActivityRoutePreviewBinding = ActivityRoutePreviewBinding.inflate(layoutInflater)
 
     override fun onStart() {
         super.onStart()
-        mapView.location.addOnIndicatorPositionChangedListener()
+        mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
     }
 
     override fun onStop() {
@@ -96,6 +120,7 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
 
     override fun onMapLongClick(point: Point): Boolean {
         endPoint = point
+        fetchRoute(point)
         return true
     }
 
@@ -108,15 +133,17 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
             .build()
         mapboxNavigation.requestRoutes(routeOptions, object : RouterCallback {
             override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
-                TODO("Not yet implemented")
             }
 
             override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
-                TODO("Not yet implemented")
             }
 
             override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
-                TODO("Not yet implemented")
+                routeLineApi.setRoutes(routes.map { RouteLine(it, null) }) { expect ->
+                    mapView.getMapboxMap().getStyle { style ->
+                        routeLineView.renderRouteDrawData(style, expect)
+                    }
+                }
             }
         })
     }
