@@ -83,8 +83,6 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
 
     private var startPoint: Point? = null
 
-    private var endPoint: Point? = null
-
     override val mapView: MapView
         get() = binding.mapView
 
@@ -102,7 +100,6 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
         mapView.getMapboxMap().apply {
             addOnMapLongClickListener(this@RoutePreviewActivity)
         }
-        mapView.location.getLocationProvider().
     }
 
     override fun inflateBinding(): ActivityRoutePreviewBinding = ActivityRoutePreviewBinding.inflate(layoutInflater)
@@ -114,12 +111,10 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
 
     override fun onStop() {
         super.onStop()
-        mapView.location
-            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
     }
 
     override fun onMapLongClick(point: Point): Boolean {
-        endPoint = point
         fetchRoute(point)
         return true
     }
@@ -128,7 +123,7 @@ class RoutePreviewActivity : BaseMapViewActivity<ActivityRoutePreviewBinding>(),
         val routeOptions = RouteOptions.builder()
             .applyDefaultNavigationOptions()
             .applyLanguageAndVoiceUnitOptions(this)
-            .coordinatesList(listOf(startPoint, endPoint))
+            .coordinatesList(listOf(startPoint, point))
             .alternatives(false)
             .build()
         mapboxNavigation.requestRoutes(routeOptions, object : RouterCallback {
