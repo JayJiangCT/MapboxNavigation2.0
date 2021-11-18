@@ -7,6 +7,7 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.Style.Companion
+import com.mapbox.maps.extension.style.StyleContract
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -25,26 +26,6 @@ abstract class BaseMapViewActivity<B : ViewBinding> : BaseActivity<B>(), EasyPer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkLocationPermissions()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
     }
 
     @AfterPermissionGranted(RC_LOCATION)

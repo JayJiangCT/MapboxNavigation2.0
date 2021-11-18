@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,7 +35,7 @@
             android:name="com.mapbox.ManageSkuToken"
             android:value="false" />
 
-        <activity android:name=".ui.RoutePreviewActivity">
+        <activity android:name=".ui.HighlightBuildingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
